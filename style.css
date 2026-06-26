@@ -2,17 +2,74 @@ body {
   font-family: Arial, sans-serif;
   background-color: #f4f8fb;
   padding: 30px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-h1 {
+header { margin-bottom: 24px; }
+
+h1 { color: #1b4d89; margin-bottom: 4px; }
+
+.subtitle { color: #555; margin-top: 0; }
+
+.back-link {
+  display: inline-block;
   color: #1b4d89;
+  text-decoration: none;
+  margin-bottom: 8px;
+}
+.back-link:hover { text-decoration: underline; }
+
+/* 홈 화면 단원 카드 */
+.unit-list { display: flex; flex-direction: column; gap: 12px; }
+
+.unit-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 18px 20px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #1b4d89;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: transform 0.1s;
+}
+.unit-card:hover { transform: translateY(-2px); }
+
+.unit-count { color: #888; font-weight: normal; font-size: 14px; }
+
+.all-button {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  background: #1b4d89;
+  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
 }
 
+/* 점수판 */
+#scoreboard {
+  background: #1b4d89;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+/* 문제 카드 */
 .question {
   background: white;
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 button {
@@ -21,20 +78,24 @@ button {
   padding: 10px;
   width: 100%;
   cursor: pointer;
+  background: #eef3f8;
+  border: 1px solid #cdd9e5;
+  border-radius: 8px;
+  font-size: 15px;
+  text-align: left;
 }
+button:hover:not(:disabled) { background: #dde8f3; }
+button:disabled { cursor: default; }
 
-#scoreboard {
-  background: #1b4d89;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  display: inline-block;
-}
+button.right { background: lightgreen; border-color: green; }
+button.wrong { background: lightcoral; border-color: darkred; }
 
-button:disabled {
-  cursor: default;
-  opacity: 0.9;
+.explanation {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fff8e1;
+  border-left: 4px solid #f0c000;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #444;
 }

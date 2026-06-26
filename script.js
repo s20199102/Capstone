@@ -1,42 +1,82 @@
-const questions = document.querySelectorAll(".question");
+// script.js
+
+// URL에서 어떤 단원을 풀지 읽어옵니다 (예: quiz.html?unit=Unit%205...)
+const params = new URLSearchParams(window.location.search);
+const selectedUnit = params.get("unit") || "all";
+
+// 풀 문제 필터링
+let quizQuestions = (selectedUnit === "all")
+  ? questions
+  : questions.filter(q => q.unit === selectedUnit);
+
+// 제목 설정
+document.getElementById("quiz-title").textContent =
+  (selectedUnit === "all") ? "All Units" : selectedUnit;
+
+const container = document.getElementById("quiz-container");
+const scoreBoard = document.getElementById("scoreboard");
 let score = 0;
 let answered = 0;
+const total = quizQuestions.length;
 
-// 점수 표시 영역 만들기
-const scoreBoard = document.createElement("div");
-scoreBoard.id = "scoreboard";
-scoreBoard.textContent = `Score: 0 / ${questions.length}`;
-document.querySelector("h1").after(scoreBoard);
+scoreBoard.textContent = `Score: 0 / ${total}`;
 
-questions.forEach(question => {
-  const buttons = question.querySelectorAll("button");
+if (total === 0) {
+  container.innerHTML = "<p>No questions in this unit yet.</p>";
+}
 
-  buttons.forEach(button => {
-    button.addEventListener("click", () => {
-      // 이미 답한 문제면 무시
-      if (question.classList.contains("done")) return;
-      question.classList.add("done");
-      answered++;
+// 각 문제를 화면에 그립니다
+quizQuestions.forEach((item, index) => {
+  const div = document.createElement("div");
+  div.className = "question";
 
-      if (button.classList.contains("correct")) {
-        button.style.backgroundColor = "lightgreen";
-        score++;
-      } else {
-        button.style.backgroundColor = "lightcoral";
-        // 정답 버튼을 초록색으로 보여주기
-        question.querySelector(".correct").style.backgroundColor = "lightgreen";
-      }
+  const qText = document.createElement("p");
+  qText.innerHTML = `<strong>${index + 1}.</strong> ${item.q}`;
+  div.appendChild(qText);
 
-      // 답한 후 그 문제의 모든 버튼 비활성화
-      buttons.forEach(b => b.disabled = true);
-
-      // 점수 갱신
-      scoreBoard.textContent = `Score: ${score} / ${questions.length}`;
-
-      // 다 풀었으면 메시지
-      if (answered === questions.length) {
-        scoreBoard.textContent = `Finished! Final Score: ${score} / ${questions.length}`;
-      }
-    });
+  item.options.forEach((option, optIndex) => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.addEventListener("click", () => handleAnswer(div, btn, item, optIndex));
+    div.appendChild(btn);
   });
+
+  // 해설 영역 (처음엔 숨김)
+  const exp = document.createElement("div");
+  exp.className = "explanation";
+  exp.style.display = "none";
+  exp.textContent = "💡 " + item.explanation;
+  div.appendChild(exp);
+
+  container.appendChild(div);
 });
+
+function handleAnswer(div, btn, item, optIndex) {
+  // 이미 답한 문제는 무시
+  if (div.classList.contains("done")) return;
+  div.classList.add("done");
+  answered++;
+
+  const buttons = div.querySelectorAll("button");
+
+  if (optIndex === item.answer) {
+    btn.classList.add("right");
+    score++;
+  } else {
+    btn.classList.add("wrong");
+    // 정답 버튼을 초록색으로 표시
+    buttons[item.answer].classList.add("right");
+  }
+
+  // 모든 버튼 비활성화 + 해설 표시
+  buttons.forEach(b => b.disabled = true);
+  div.querySelector(".explanation").style.display = "block";
+
+  // 점수 갱신
+  scoreBoard.textContent = `Score: ${score} / ${total}`;
+
+  if (answered === total) {
+    const pct = Math.round((score / total) * 100);
+    scoreBoard.textContent = `Done! ${score} / ${total} (${pct}%)`;
+  }
+}
